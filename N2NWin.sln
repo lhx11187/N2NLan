@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "N2NWin", "N2NWin\N2NWin.csproj", "{4F43D9C1-76E4-4B1E-B35F-E1CEDA49C1A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "N2NLan", "N2NLan\N2NLan.csproj", "{705B7147-7613-4793-B3C3-DCCFFBB1AD90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "N2NLanIP", "N2NLanIP\N2NLanIP.csproj", "{DCEB66B8-0EBB-49CB-9C60-2D3522C57E79}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4F43D9C1-76E4-4B1E-B35F-E1CEDA49C1A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F43D9C1-76E4-4B1E-B35F-E1CEDA49C1A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F43D9C1-76E4-4B1E-B35F-E1CEDA49C1A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F43D9C1-76E4-4B1E-B35F-E1CEDA49C1A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{705B7147-7613-4793-B3C3-DCCFFBB1AD90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{705B7147-7613-4793-B3C3-DCCFFBB1AD90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{705B7147-7613-4793-B3C3-DCCFFBB1AD90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{705B7147-7613-4793-B3C3-DCCFFBB1AD90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCEB66B8-0EBB-49CB-9C60-2D3522C57E79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCEB66B8-0EBB-49CB-9C60-2D3522C57E79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCEB66B8-0EBB-49CB-9C60-2D3522C57E79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCEB66B8-0EBB-49CB-9C60-2D3522C57E79}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
