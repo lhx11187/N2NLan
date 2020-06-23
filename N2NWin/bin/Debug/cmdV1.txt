@@ -1,0 +1,25 @@
+ edge -a 10.10.10.1 -c 111 -k 123 -l n2n.lucktu.com:10082
+
+ edge -a 10.10.10.1 -c 111 -k 123 -l n2n.lucktu.com:10082
+
+
+edge -a <tun IP address> -c <community> -k <encrypt key> -s <netmask> [-m <MAC address>]
+-l <supernode host:port> [-p <local port>] [-M <mtu>] [-t] [-r] [-v] [-b] [-h]
+
+-a <tun IP address>      | n2n IP address
+-c <community>           | n2n community name
+-k <encrypt key>         | Encryption key (ASCII) - also N2N_KEY=<encrypt key>
+-s <netmask>             | Edge interface netmask in dotted decimal notation (255.255.255.0)
+-l <supernode host:port> | Supernode IP:port
+-b                       | Periodically resolve supernode IP
+                         | (when supernodes are running on dynamic IPs)
+-p <local port>          | Local port used for connecting to supernode
+-m <MAC address>         | Choose a MAC address for the TAP interface
+                         | eg. -m 01:02:03:04:05:06
+-M <mtu>                 | Specify n2n MTU (default 1400)
+-t                       | Use http tunneling (experimental)
+-r                       | Enable packet forwarding through n2n community
+-v                       | Verbose
+
+Environment variables:
+  N2N_KEY                | Encryption key (ASCII)

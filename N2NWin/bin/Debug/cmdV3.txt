@@ -1,0 +1,32 @@
+ edge21 -a 10.10.10.1 -c 111 -k 123 -l n2n.lucktu.com:10082
+
+
+
+Welcome to n2n v.2.1.0 for Windows-6.1.7601
+Built on Aug 13 2017 08:25:43
+Copyright 2007-09 - http://www.ntop.org
+
+edge -a [static:|dhcp:]<tun IP address> -c <community> [-k <encrypt key> | -K <key file>] [-s <netmask>] [-m <MAC address>]
+-l <supernode host:port> [-p <local port>] [-M <mtu>] [-r] [-E] [-v] [-t <mgmt port>] [-b] [-h]
+
+-a <mode:address>        | Set interface address. For DHCP use '-r -a dhcp:0.0.0.0'
+-c <community>           | n2n community name the edge belongs to.
+-k <encrypt key>         | Encryption key (ASCII) - also N2N_KEY=<encrypt key>. Not with -K.
+-K <key file>            | Specify a key schedule file to load. Not with -k.
+-s <netmask>             | Edge interface netmask in dotted decimal notation (255.255.255.0).
+-l <supernode host:port> | Supernode IP:port
+-L <local_ip>            | Add local ip to bypass between same nat problem
+-i <interval>            | Set the NAT hole-punch interval (default 20seconds)
+-b                       | Periodically resolve supernode IP
+                         : (when supernodes are running on dynamic IPs)
+-p <local port>          | Fixed local UDP port.
+-m <MAC address>         | Fix MAC address for the TAP interface (otherwise it may be random)
+                         : eg. -m 01:02:03:04:05:06
+-M <mtu>                 | Specify n2n MTU of edge interface (default 1400).
+-r                       | Enable packet forwarding through n2n community.
+-E                       | Accept multicast MAC addresses (default=drop).
+-v                       | Make more verbose. Repeat as required.
+-t                       | Management UDP Port (for multiple edges on a machine).
+
+Environment variables:
+  N2N_KEY                | Encryption key (ASCII). Not with -K or -k.
