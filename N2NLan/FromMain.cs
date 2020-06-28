@@ -335,5 +335,10 @@ namespace N2NLan
             TB_Local_IP.Text = ip.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "").Replace("\t", "");
             BT_Save_Click(sender, e);
         }
+
+        private void 使用说明ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("http://n2n.gearhostpreview.com/readme.html");
+        }
     }
 }
