@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Net;
 using System.Text;
 using System.Windows.Forms;
 
@@ -96,6 +98,42 @@ namespace N2NLan
 
         private void FromMain_Load(object sender, EventArgs e)
         {
+            //检查更新
+            string LocalVersion=System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            this.Text = this.Text + " V" + LocalVersion;
+            IniWrite("setting", "Version", LocalVersion);
+            string ServerVersion = HttpHelper.GetResponseString(HttpHelper.CreateGetHttpResponse("http://n2n.gearhostpreview.com/api/Version/"));
+            ServerVersion = ServerVersion.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "").Replace("\t", "");
+            if (ServerVersion != IniRead("setting", "Version"))
+            {
+                try
+                {
+                    if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\temp\\"))
+                        Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\temp\\");
+                    WebClient wc = new WebClient();
+                    //wc.DownloadFile("http://n2n.gearhostpreview.com/N2NLan.zip", Application.StartupPath + "\\N2NLan.zip");
+                    wc.DownloadFile("http://n2n.gearhostpreview.com/N2NLan.exe", Application.StartupPath + "\\temp\\N2NLan.exe");
+                    //ZipHelper zh = new ZipHelper();
+                    //zh.UnZip(Application.StartupPath + "\\N2NLan.zip", Application.StartupPath + "\\temp\\");
+                    File.WriteAllText(Application.StartupPath + "\\update.bat", "TIMEOUT /T 10 \r\n copy " + Application.StartupPath + "\\temp\\N2NLan.exe " + Application.StartupPath + "\\N2NLan.exe \r\n"+Application.StartupPath + "\\N2NLan.exe \r\n");
+                    if (MessageBox.Show("程序更新？", "退出", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                    {
+                        // 关闭所有的线程
+                        killProcess("edge.exe");
+                        //killProcess(SuperNode_Path);
+                        this.Dispose();
+                        this.Close();
+                        Process.Start(Application.StartupPath + "\\update.bat");
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+
+
             if (IntPtr.Size == 8)
             {
                 systype = true;//64 bit
