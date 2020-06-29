@@ -441,9 +441,9 @@ namespace N2NLan
         {
             string path = "";
             if (systype)
-                path = Application.StartupPath + "\\driver\\NDIS6_x64\\tapinstall.exe";
+                path = Application.StartupPath + "\\driver\\NDIS6_x64\\tapinstall.exe install "+Application.StartupPath + "\\driver\\NDIS6_x64\\OemVista.inf tap0901";
             else
-                path = Application.StartupPath + "\\driver\\NDIS6_x86\\tapinstall.exe";
+                path = Application.StartupPath + "\\driver\\NDIS6_x86\\tapinstall.exe install " +Application.StartupPath + "\\driver\\NDIS6_x86\\OemVista.inf tap0901";
             Process.Start(path);
             /*
             var process = new Process();
