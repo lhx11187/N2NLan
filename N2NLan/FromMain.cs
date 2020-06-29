@@ -6,7 +6,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace N2NLan
@@ -98,41 +100,7 @@ namespace N2NLan
 
         private void FromMain_Load(object sender, EventArgs e)
         {
-            //检查更新
-            string LocalVersion=System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            this.Text = this.Text + " V" + LocalVersion;
-            IniWrite("setting", "Version", LocalVersion);
-            string ServerVersion = HttpHelper.GetResponseString(HttpHelper.CreateGetHttpResponse("http://n2n.gearhostpreview.com/api/Version/"));
-            ServerVersion = ServerVersion.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "").Replace("\t", "");
-            if (ServerVersion != IniRead("setting", "Version"))
-            {
-                try
-                {
-                    if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\temp\\"))
-                        Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\temp\\");
-                    WebClient wc = new WebClient();
-                    //wc.DownloadFile("http://n2n.gearhostpreview.com/N2NLan.zip", Application.StartupPath + "\\N2NLan.zip");
-                    wc.DownloadFile("http://n2n.gearhostpreview.com/N2NLan.exe", Application.StartupPath + "\\temp\\N2NLan.exe");
-                    //ZipHelper zh = new ZipHelper();
-                    //zh.UnZip(Application.StartupPath + "\\N2NLan.zip", Application.StartupPath + "\\temp\\");
-                    File.WriteAllText(Application.StartupPath + "\\update.bat", "TIMEOUT /T 10 \r\n copy " + Application.StartupPath + "\\temp\\N2NLan.exe " + Application.StartupPath + "\\N2NLan.exe \r\n"+Application.StartupPath + "\\N2NLan.exe \r\n");
-                    if (MessageBox.Show("程序更新？", "退出", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
-                    {
-                        // 关闭所有的线程
-                        killProcess("edge.exe");
-                        //killProcess(SuperNode_Path);
-                        this.Dispose();
-                        this.Close();
-                        Process.Start(Application.StartupPath + "\\update.bat");
-                    }
-
-                }
-                catch (Exception ex)
-                {
-
-                }
-            }
-
+            ChenkUpdate();
 
             if (IntPtr.Size == 8)
             {
@@ -146,7 +114,11 @@ namespace N2NLan
             {
                 //...NotSupport
             }
-
+            if (!ChenkNetworkInterface())
+            {
+                BT_Start.Text = "安装驱动";
+                BT_Start.BackColor = Color.Yellow;
+            }
 
             //systype = Environment.Is64BitOperatingSystem;//true是x64
             TB_SuperNode_IP.Text = IniRead("setting", "SuperNode_IP");
@@ -229,6 +201,13 @@ namespace N2NLan
                 sys_Path = "\\x64\\edge.exe";
             else
                 sys_Path = "\\x86\\edge.exe";
+            if (BT_Start.Text == "安装驱动")
+            { 
+                DriverInstall();
+                Thread.Sleep(5);
+                FromMain_Load(sender,e);
+                return;
+            }
             if (BT_Start.Text == "启动")
             {
                 BT_Start.Text = "停止";
@@ -248,6 +227,7 @@ namespace N2NLan
                 string verbose = IniRead("setting", "verbose");
                 string packet_forwarding = IniRead("setting", "packet_forwarding");
                 string Local_Port = TB_Local_Port.Text;
+                string SelfArg = IniRead("setting", "SelfArg");
 
                 string appFile = Application.StartupPath + sys_Path;
                 string arg = " -a " + Local_IP + " -c " + Group + " -k " + Passwd + " -l " + SuperNode_IP + ":" + SuperNode_Port;
@@ -264,16 +244,17 @@ namespace N2NLan
                     arg = arg + " -v";
                 if (packet_forwarding == "1")
                     arg = arg + " -r";
+                if (!String.IsNullOrEmpty(SelfArg))
+                    arg = arg + " " + SelfArg;
                 /*
                 if (resolve_supernode == "1")
                     arg = arg + " -b ";
                 if (http_tunneling == "1")
                     arg = arg + " -t";
-                if (!String.IsNullOrWhiteSpace(SelfArg))
-                    arg = arg + " " + SelfArg;
                  */
                 RealAction(appFile, arg);
                 //N2NLog.AppendText(DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss:") + "Start" + "\r\n");
+                PingIP();
             }
             else
             {
@@ -377,6 +358,115 @@ namespace N2NLan
         private void 使用说明ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Process.Start("http://n2n.gearhostpreview.com/readme.html");
+        }
+
+        private void ChenkUpdate()
+        {
+            //检查更新
+            string LocalVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            this.Text = this.Text + " V" + LocalVersion;
+            IniWrite("setting", "Version", LocalVersion);
+            string ServerVersion = HttpHelper.GetResponseString(HttpHelper.CreateGetHttpResponse("http://n2n.gearhostpreview.com/api/Version/"));
+            ServerVersion = ServerVersion.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "").Replace("\t", "");
+            if (ServerVersion != IniRead("setting", "Version"))
+            {
+                try
+                {
+                    if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\temp\\"))
+                        Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\temp\\");
+                    WebClient wc = new WebClient();
+                    //wc.DownloadFile("http://n2n.gearhostpreview.com/N2NLan.zip", Application.StartupPath + "\\N2NLan.zip");
+                    wc.DownloadFile("http://n2n.gearhostpreview.com/N2NLan.exe", Application.StartupPath + "\\temp\\N2NLan.exe");
+                    //ZipHelper zh = new ZipHelper();
+                    //zh.UnZip(Application.StartupPath + "\\N2NLan.zip", Application.StartupPath + "\\temp\\");
+                    File.WriteAllText(Application.StartupPath + "\\update.bat", "TIMEOUT /T 10 \r\n copy " + Application.StartupPath + "\\temp\\N2NLan.exe " + Application.StartupPath + "\\N2NLan.exe \r\n" + Application.StartupPath + "\\N2NLan.exe \r\n");
+                    if (MessageBox.Show("程序更新？", "退出", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                    {
+                        // 关闭所有的线程
+                        killProcess("edge.exe");
+                        //killProcess(SuperNode_Path);
+                        this.Dispose();
+                        this.Close();
+                        Process.Start(Application.StartupPath + "\\update.bat");
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+        }
+
+        private bool ChenkNetworkInterface()
+        {
+            NetworkInterface[] fNetworkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (NetworkInterface adapter in fNetworkInterfaces)
+            {
+                if (adapter.Description.Contains("TAP-Windows"))
+                    return true;
+                /*
+                #region  网卡信息
+                Console.WriteLine("-----------------------------------------------------------");
+                Console.WriteLine("-----------------------------------------------------------");
+                Console.WriteLine("Id .................. : {0}", adapter.Id); // 获取网络适配器的标识符  
+                Console.WriteLine("Name ................ : {0}", adapter.Name); // 获取网络适配器的名称  
+                Console.WriteLine("Description ......... : {0}", adapter.Description); // 获取接口的描述  
+                Console.WriteLine("Interface type ...... : {0}", adapter.NetworkInterfaceType); // 获取接口类型  
+                Console.WriteLine("Is receive only...... : {0}", adapter.IsReceiveOnly); // 获取 Boolean 值，该值指示网络接口是否设置为仅接收数据包。  
+                Console.WriteLine("Multicast............ : {0}", adapter.SupportsMulticast); // 获取 Boolean 值，该值指示是否启用网络接口以接收多路广播数据包。  
+                Console.WriteLine("Speed ............... : {0}", adapter.Speed); // 网络接口的速度  
+                Console.WriteLine("Physical Address .... : {0}", adapter.GetPhysicalAddress().ToString()); // MAC 地址  
+                IPInterfaceProperties fIPInterfaceProperties = adapter.GetIPProperties();
+                UnicastIPAddressInformationCollection UnicastIPAddressInformationCollection = fIPInterfaceProperties.UnicastAddresses;
+
+                foreach (UnicastIPAddressInformation UnicastIPAddressInformation in UnicastIPAddressInformationCollection)
+                {
+                    if (UnicastIPAddressInformation.Address.AddressFamily == AddressFamily.InterNetwork)
+                        Console.WriteLine("Ip Address .......... : {0}", UnicastIPAddressInformation.Address); // Ip 地址  
+                }
+                #endregion
+                */
+            }
+            return false;
+        }
+        /// <summary>
+        /// 安装驱动
+        /// </summary>
+        public void DriverInstall()
+        {
+            string path = "";
+            if (systype)
+                path = Application.StartupPath + "\\driver\\NDIS6_x64\\tapinstall.exe";
+            else
+                path = Application.StartupPath + "\\driver\\NDIS6_x86\\tapinstall.exe";
+            Process.Start(path);
+            /*
+            var process = new Process();
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.FileName = path;// "cmd.exe";
+
+            process.StartInfo.Arguments = ""; // where driverPath is path of .inf file
+            process.Start();
+            process.WaitForExit();
+            process.Dispose();
+             */
+        }
+
+        private void 所有IPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string allip = HttpHelper.GetResponseString(HttpHelper.CreateGetHttpResponse("http://n2n.gearhostpreview.com/api/allip/"));
+            File.WriteAllText(Application.StartupPath + "\\allip.txt", allip);
+            Process.Start(Application.StartupPath + "\\allip.txt");
+        }
+
+        private void PingIP()
+        {
+            File.WriteAllText(Application.StartupPath + "\\pingip.bat", "TIMEOUT /T 10 \r\n ping 10.10.1.1 -t\r\n");
+            Process.Start(Application.StartupPath + "\\pingip.bat");
         }
     }
 }
