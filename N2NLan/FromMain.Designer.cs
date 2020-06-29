@@ -77,7 +77,7 @@
             this.所有IPToolStripMenuItem,
             this.关于ToolStripMenuItem});
             this.CMS.Name = "CMS";
-            this.CMS.Size = new System.Drawing.Size(153, 136);
+            this.CMS.Size = new System.Drawing.Size(125, 114);
             // 
             // 打开ToolStripMenuItem
             // 
@@ -224,6 +224,7 @@
             this.TB_SuperNode_IP.Name = "TB_SuperNode_IP";
             this.TB_SuperNode_IP.Size = new System.Drawing.Size(105, 21);
             this.TB_SuperNode_IP.TabIndex = 0;
+            this.TB_SuperNode_IP.TextChanged += new System.EventHandler(this.TB_SuperNode_IP_TextChanged);
             // 
             // TB_Group
             // 
@@ -231,6 +232,7 @@
             this.TB_Group.Name = "TB_Group";
             this.TB_Group.Size = new System.Drawing.Size(104, 21);
             this.TB_Group.TabIndex = 4;
+            this.TB_Group.TextChanged += new System.EventHandler(this.TB_Group_TextChanged);
             // 
             // label6
             // 

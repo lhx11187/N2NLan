@@ -210,6 +210,7 @@ namespace N2NLan
             }
             if (BT_Start.Text == "启动")
             {
+                groupBox2.Enabled = false;
                 BT_Start.Text = "停止";
                 BT_Start.BackColor = Color.Red;
 
@@ -260,7 +261,7 @@ namespace N2NLan
             {
                 BT_Start.Text = "启动";
                 BT_Start.BackColor = Color.Green;
-
+                groupBox2.Enabled = true;
                 killProcess("edge.exe");
                 //N2NLog.AppendText(DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss:") + "Stop" + "\r\n");
             }
@@ -377,6 +378,7 @@ namespace N2NLan
                     if (File.Exists(Application.StartupPath + "\\temp\\N2NLan.exe"))
                         File.Delete(Application.StartupPath + "\\temp\\N2NLan.exe");
                     WebClient wc = new WebClient();
+                    wc.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.Reload);
                     //wc.DownloadFile("http://n2n.gearhostpreview.com/N2NLan.zip", Application.StartupPath + "\\N2NLan.zip");
                     wc.DownloadFile("http://n2n.gearhostpreview.com/N2NLan.exe", Application.StartupPath + "\\temp\\N2NLan.exe");
                     //ZipHelper zh = new ZipHelper();
@@ -469,6 +471,30 @@ namespace N2NLan
         {
             File.WriteAllText(Application.StartupPath + "\\pingip.bat", "TIMEOUT /T 10 \r\n ping 10.10.1.1 -t\r\n");
             Process.Start(Application.StartupPath + "\\pingip.bat");
+        }
+
+        private void TB_SuperNode_IP_TextChanged(object sender, EventArgs e)
+        {
+            if (TB_SuperNode_IP.Text != "n2n.udpfile.com" || TB_Group.Text != "BD")
+            {
+                BT_Random.Enabled = false;
+            }
+            else 
+            { 
+                BT_Random.Enabled = true;
+            }
+        }
+
+        private void TB_Group_TextChanged(object sender, EventArgs e)
+        {
+            if (TB_SuperNode_IP.Text != "n2n.udpfile.com" || TB_Group.Text != "BD")
+            {
+                BT_Random.Enabled = false;
+            }
+            else 
+            { 
+                BT_Random.Enabled = true;
+            }
         }
     }
 }
