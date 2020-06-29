@@ -374,12 +374,14 @@ namespace N2NLan
                 {
                     if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\temp\\"))
                         Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\temp\\");
+                    if (File.Exists(Application.StartupPath + "\\temp\\N2NLan.exe"))
+                        File.Delete(Application.StartupPath + "\\temp\\N2NLan.exe");
                     WebClient wc = new WebClient();
                     //wc.DownloadFile("http://n2n.gearhostpreview.com/N2NLan.zip", Application.StartupPath + "\\N2NLan.zip");
                     wc.DownloadFile("http://n2n.gearhostpreview.com/N2NLan.exe", Application.StartupPath + "\\temp\\N2NLan.exe");
                     //ZipHelper zh = new ZipHelper();
                     //zh.UnZip(Application.StartupPath + "\\N2NLan.zip", Application.StartupPath + "\\temp\\");
-                    File.WriteAllText(Application.StartupPath + "\\update.bat", "TIMEOUT /T 10 \r\n copy " + Application.StartupPath + "\\temp\\N2NLan.exe " + Application.StartupPath + "\\N2NLan.exe \r\n" + Application.StartupPath + "\\N2NLan.exe \r\n");
+                    File.WriteAllText(Application.StartupPath + "\\update.bat", "TIMEOUT /T 10 \r\n copy " + Application.StartupPath + "\\temp\\N2NLan.exe " + Application.StartupPath + "\\N2NLan.exe \r\nTIMEOUT /T 10 \r\n" + Application.StartupPath + "\\N2NLan.exe \r\n");
                     if (MessageBox.Show("程序更新？", "退出", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
                     {
                         // 关闭所有的线程
