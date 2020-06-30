@@ -195,6 +195,7 @@ namespace N2NLan
 
         private void BT_Start_Click(object sender, EventArgs e)
         {
+            Save();
             killProcess("edge.exe");
             string sys_Path = "";
             if (systype)
@@ -296,7 +297,7 @@ namespace N2NLan
             }
         }
 
-        private void BT_Save_Click(object sender, EventArgs e)
+        private void Save()
         {
             IniWrite("setting", "SuperNode_IP", TB_SuperNode_IP.Text.Trim());
             IniWrite("setting", "SuperNode_Port", TB_SuperNode_Port.Text.Trim());
@@ -353,7 +354,7 @@ namespace N2NLan
         {
             string ip = HttpHelper.GetResponseString(HttpHelper.CreateGetHttpResponse("http://n2n.gearhostpreview.com/api/N2N/"));
             TB_Local_IP.Text = ip.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "").Replace("\t", "");
-            BT_Save_Click(sender, e);
+            Save();
         }
 
         private void 使用说明ToolStripMenuItem_Click(object sender, EventArgs e)

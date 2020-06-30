@@ -33,12 +33,13 @@
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.CMS = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.打开ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.关闭ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.使用说明ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.所有IPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.关于ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.关闭ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.BT_Random = new System.Windows.Forms.Button();
-            this.BT_Save = new System.Windows.Forms.Button();
             this.CB_Min = new System.Windows.Forms.CheckBox();
             this.TB_SuperNode_Port = new System.Windows.Forms.TextBox();
             this.CB_Auto = new System.Windows.Forms.CheckBox();
@@ -54,7 +55,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.BT_Start = new System.Windows.Forms.Button();
-            this.所有IPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.BT_Save = new System.Windows.Forms.Button();
             this.CMS.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -72,40 +73,53 @@
             // 
             this.CMS.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.打开ToolStripMenuItem,
-            this.关闭ToolStripMenuItem,
             this.使用说明ToolStripMenuItem,
             this.所有IPToolStripMenuItem,
-            this.关于ToolStripMenuItem});
+            this.关于ToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.关闭ToolStripMenuItem});
             this.CMS.Name = "CMS";
-            this.CMS.Size = new System.Drawing.Size(125, 114);
+            this.CMS.Size = new System.Drawing.Size(125, 120);
             // 
             // 打开ToolStripMenuItem
             // 
             this.打开ToolStripMenuItem.Name = "打开ToolStripMenuItem";
-            this.打开ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.打开ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.打开ToolStripMenuItem.Text = "打开";
             this.打开ToolStripMenuItem.Click += new System.EventHandler(this.打开ToolStripMenuItem_Click);
-            // 
-            // 关闭ToolStripMenuItem
-            // 
-            this.关闭ToolStripMenuItem.Name = "关闭ToolStripMenuItem";
-            this.关闭ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.关闭ToolStripMenuItem.Text = "关闭";
-            this.关闭ToolStripMenuItem.Click += new System.EventHandler(this.关闭ToolStripMenuItem_Click);
             // 
             // 使用说明ToolStripMenuItem
             // 
             this.使用说明ToolStripMenuItem.Name = "使用说明ToolStripMenuItem";
-            this.使用说明ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.使用说明ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.使用说明ToolStripMenuItem.Text = "使用说明";
             this.使用说明ToolStripMenuItem.Click += new System.EventHandler(this.使用说明ToolStripMenuItem_Click);
+            // 
+            // 所有IPToolStripMenuItem
+            // 
+            this.所有IPToolStripMenuItem.Name = "所有IPToolStripMenuItem";
+            this.所有IPToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.所有IPToolStripMenuItem.Text = "所有IP";
+            this.所有IPToolStripMenuItem.Click += new System.EventHandler(this.所有IPToolStripMenuItem_Click);
             // 
             // 关于ToolStripMenuItem
             // 
             this.关于ToolStripMenuItem.Name = "关于ToolStripMenuItem";
-            this.关于ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.关于ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.关于ToolStripMenuItem.Text = "关于";
             this.关于ToolStripMenuItem.Click += new System.EventHandler(this.关于ToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(121, 6);
+            // 
+            // 关闭ToolStripMenuItem
+            // 
+            this.关闭ToolStripMenuItem.Name = "关闭ToolStripMenuItem";
+            this.关闭ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.关闭ToolStripMenuItem.Text = "关闭";
+            this.关闭ToolStripMenuItem.Click += new System.EventHandler(this.关闭ToolStripMenuItem_Click);
             // 
             // groupBox2
             // 
@@ -141,16 +155,6 @@
             this.BT_Random.Text = "随机";
             this.BT_Random.UseVisualStyleBackColor = true;
             this.BT_Random.Click += new System.EventHandler(this.BT_Random_Click);
-            // 
-            // BT_Save
-            // 
-            this.BT_Save.Location = new System.Drawing.Point(270, 80);
-            this.BT_Save.Name = "BT_Save";
-            this.BT_Save.Size = new System.Drawing.Size(47, 23);
-            this.BT_Save.TabIndex = 24;
-            this.BT_Save.Text = "保存";
-            this.BT_Save.UseVisualStyleBackColor = true;
-            this.BT_Save.Click += new System.EventHandler(this.BT_Save_Click);
             // 
             // CB_Min
             // 
@@ -281,12 +285,15 @@
             this.BT_Start.UseVisualStyleBackColor = false;
             this.BT_Start.Click += new System.EventHandler(this.BT_Start_Click);
             // 
-            // 所有IPToolStripMenuItem
+            // BT_Save
             // 
-            this.所有IPToolStripMenuItem.Name = "所有IPToolStripMenuItem";
-            this.所有IPToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.所有IPToolStripMenuItem.Text = "所有IP";
-            this.所有IPToolStripMenuItem.Click += new System.EventHandler(this.所有IPToolStripMenuItem_Click);
+            this.BT_Save.Location = new System.Drawing.Point(270, 80);
+            this.BT_Save.Name = "BT_Save";
+            this.BT_Save.Size = new System.Drawing.Size(47, 23);
+            this.BT_Save.TabIndex = 24;
+            this.BT_Save.Text = "保存";
+            this.BT_Save.UseVisualStyleBackColor = true;
+            this.BT_Save.Visible = false;
             // 
             // FromMain
             // 
@@ -328,7 +335,6 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.CheckBox CB_Min;
         private System.Windows.Forms.CheckBox CB_Auto;
-        private System.Windows.Forms.Button BT_Save;
         private System.Windows.Forms.Button BT_Start;
         private System.Windows.Forms.ContextMenuStrip CMS;
         private System.Windows.Forms.ToolStripMenuItem 打开ToolStripMenuItem;
@@ -337,6 +343,8 @@
         private System.Windows.Forms.Button BT_Random;
         private System.Windows.Forms.ToolStripMenuItem 使用说明ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 所有IPToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.Button BT_Save;
     }
 }
 
