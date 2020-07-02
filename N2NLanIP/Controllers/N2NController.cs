@@ -16,11 +16,6 @@ namespace N2NLanIP.Controllers
         // GET api/N2N
         public string Get()
         {
-            /*
-            SQLhelper sh = new SQLhelper();
-            DataTable dt = sh.DataTableQuery("SELECT top 1 Local_IP FROM IP order by Local_IP DESC");
-            string IP = dt.Rows[0][0].ToString();
-            */
             if(!File.Exists(AppDomain.CurrentDomain.BaseDirectory+"IP.txt"))
                 File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "IP.txt", "");
             string[] lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "IP.txt");
@@ -29,20 +24,22 @@ namespace N2NLanIP.Controllers
             //ArrayList al = new ArrayList();
             foreach (string l in lines)
             {
-                string[] ips = l.Split('.');
+                string IPtemp = l.Split(',')[1];
+                string[] ips = IPtemp.Split('.');
                 if (Convert.ToInt32(ips[2]) > max2)
                     max2 = Convert.ToInt32(ips[2]);
                 //al.Add(l); 
             }
             foreach (string l in lines)
             {
-                string[] ips = l.Split('.');
+                string IPtemp = l.Split(',')[1];
+                string[] ips = IPtemp.Split('.');
                 if (Convert.ToInt32(ips[2])==max2)
                     if (Convert.ToInt32(ips[3]) > max3)
                         max3 = Convert.ToInt32(ips[3]);
             }
-            string IP = "10.10." + max2.ToString() + "." + max3.ToString();
-            string[] ipss = IP.Split('.');
+            string MAXIP = "10.10." + max2.ToString() + "." + max3.ToString();
+            string[] ipss = MAXIP.Split('.');
             if (Convert.ToInt32(ipss[3]) < 254)
                 ipss[3]=(Convert.ToInt32(ipss[3])+1).ToString();
             else
@@ -54,30 +51,54 @@ namespace N2NLanIP.Controllers
                 }
             }
             string IPnew = String.Join(".",ipss);
-            File.AppendAllText(AppDomain.CurrentDomain.BaseDirectory + "IP.txt", IPnew + "\r\n");
-            //sh.ExecuteNonQuery("insert into IP (Local_IP) values ('" + IPnew + "')");
+            //File.AppendAllText(AppDomain.CurrentDomain.BaseDirectory + "IP.txt", IPnew + "\r\n");
             return IPnew;
         }
 
         // GET api/N2N/250
-        public string Get(int id)
+        public string Get(string id)
         {
-            return "value";
+            id = id.ToUpper();
+            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "IP.txt"))
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "IP.txt", "");
+            string[] lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "IP.txt");
+
+            foreach (string l in lines)
+            {
+                if (l.Contains(id))
+                    return l.Split(',')[1];
+            }
+            string IPnew = Get();
+            File.AppendAllText(AppDomain.CurrentDomain.BaseDirectory + "IP.txt", id + "," + IPnew + "\r\n");
+            return IPnew;
         }
 
-        // POST api/values
+        // POST api/N2N/values
         public string Post([FromBody]string value)
         {
-            string IPnew = value.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "").Replace("\t", "");
-            if (!String.IsNullOrWhiteSpace(IPnew))
+            string valuenew = value.Trim().ToUpper().Replace("\"", "").Replace("\r", "").Replace("\n", "").Replace("\t", "");
+            if (!String.IsNullOrWhiteSpace(valuenew) && valuenew.Contains(","))
             {
                 if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "IP.txt"))
                     File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "IP.txt", "");
-                File.AppendAllText(AppDomain.CurrentDomain.BaseDirectory + "IP.txt", IPnew + "\r\n");
-                //SQLhelper sh = new SQLhelper();
-                //sh.ExecuteNonQuery("insert into IP (Local_IP) values ('" + IPnew + "')");
+                string StrAll=File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "IP.txt");
+                if (!StrAll.Contains(value))
+                    if (!StrAll.Contains(value.Split(',')[0]))
+                        File.AppendAllText(AppDomain.CurrentDomain.BaseDirectory + "IP.txt", valuenew + "\r\n");
+                    else 
+                    {
+                        string[] lines = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "IP.txt");
+                        string All = "";
+                        foreach (string l in lines)
+                        {
+                            if (l.Contains(value.Split(',')[0]))
+                                All += value + "\r\n";
+                            All += l + "\r\n";
+                        }
+                        File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "IP.txt", All);
+                    }
             }
-            return IPnew;
+            return valuenew;
         }
 
         // PUT api/values/5
@@ -94,7 +115,8 @@ namespace N2NLanIP.Controllers
             string all="";
             foreach (string l in lines)
             {
-                if (l != value)
+                string CPUID = l.Split(',')[0];
+                if (CPUID.Trim().ToUpper() != value.ToUpper())
                 {
                     all+=l+"\r\n";
                 }

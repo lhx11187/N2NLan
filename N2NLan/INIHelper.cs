@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -36,6 +37,7 @@ namespace N2NLan
         /// <PARAM name="Value">值（字符串）</PARAM>
         public static void Write(string Section, string Key, string Value, string path)
         {
+            //if (!ExistSection(Section, path))
             WritePrivateProfileString(Section, Key, Value, path);
         }
         /// <summary>
@@ -491,6 +493,24 @@ namespace N2NLan
                 WriteString(section, keyList[i], valueList[i], path);
             }
             return bRst;
+        }
+        #endregion
+
+        #region 增加节、键
+        public static void AddSection(string section, string fileName)
+        {
+            if (!File.Exists(fileName))
+                File.WriteAllText(fileName,"");
+            File.WriteAllText(fileName, "\r\n[" + section + "]\r\n");
+        }
+
+        public static void AddKey(string section, string key, string fileName)
+        {
+            if (!File.Exists(fileName))
+                File.WriteAllText(fileName, "");
+            if (!ExistSection(section, fileName))
+                File.WriteAllText(fileName, "\r\n[" + section + "]\r\n");
+            WritePrivateProfileString(section, key, "", fileName);
         }
         #endregion
     }

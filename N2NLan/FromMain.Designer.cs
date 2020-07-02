@@ -39,13 +39,10 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.关闭ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.BT_Random = new System.Windows.Forms.Button();
             this.CB_Min = new System.Windows.Forms.CheckBox();
             this.TB_SuperNode_Port = new System.Windows.Forms.TextBox();
             this.CB_Auto = new System.Windows.Forms.CheckBox();
-            this.TB_Local_Port = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
             this.TB_Passwd = new System.Windows.Forms.TextBox();
             this.TB_Local_IP = new System.Windows.Forms.TextBox();
             this.TB_SuperNode_IP = new System.Windows.Forms.TextBox();
@@ -55,7 +52,10 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.BT_Start = new System.Windows.Forms.Button();
-            this.BT_Save = new System.Windows.Forms.Button();
+            this.CB_Ping = new System.Windows.Forms.CheckBox();
+            this.TB_PingIP = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.CB_AutoIP = new System.Windows.Forms.CheckBox();
             this.CMS.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -123,14 +123,14 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.BT_Random);
-            this.groupBox2.Controls.Add(this.BT_Save);
+            this.groupBox2.Controls.Add(this.CB_AutoIP);
+            this.groupBox2.Controls.Add(this.TB_PingIP);
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.CB_Ping);
             this.groupBox2.Controls.Add(this.CB_Min);
             this.groupBox2.Controls.Add(this.TB_SuperNode_Port);
             this.groupBox2.Controls.Add(this.CB_Auto);
-            this.groupBox2.Controls.Add(this.TB_Local_Port);
             this.groupBox2.Controls.Add(this.label7);
-            this.groupBox2.Controls.Add(this.label15);
             this.groupBox2.Controls.Add(this.TB_Passwd);
             this.groupBox2.Controls.Add(this.TB_Local_IP);
             this.groupBox2.Controls.Add(this.TB_SuperNode_IP);
@@ -141,20 +141,10 @@
             this.groupBox2.Controls.Add(this.label12);
             this.groupBox2.Location = new System.Drawing.Point(12, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(331, 126);
+            this.groupBox2.Size = new System.Drawing.Size(289, 156);
             this.groupBox2.TabIndex = 19;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "设置";
-            // 
-            // BT_Random
-            // 
-            this.BT_Random.Location = new System.Drawing.Point(192, 39);
-            this.BT_Random.Name = "BT_Random";
-            this.BT_Random.Size = new System.Drawing.Size(37, 23);
-            this.BT_Random.TabIndex = 25;
-            this.BT_Random.Text = "随机";
-            this.BT_Random.UseVisualStyleBackColor = true;
-            this.BT_Random.Click += new System.EventHandler(this.BT_Random_Click);
             // 
             // CB_Min
             // 
@@ -168,7 +158,7 @@
             // 
             // TB_SuperNode_Port
             // 
-            this.TB_SuperNode_Port.Location = new System.Drawing.Point(270, 14);
+            this.TB_SuperNode_Port.Location = new System.Drawing.Point(226, 14);
             this.TB_SuperNode_Port.Name = "TB_SuperNode_Port";
             this.TB_SuperNode_Port.Size = new System.Drawing.Size(47, 21);
             this.TB_SuperNode_Port.TabIndex = 1;
@@ -183,30 +173,14 @@
             this.CB_Auto.Text = "自动启动";
             this.CB_Auto.UseVisualStyleBackColor = true;
             // 
-            // TB_Local_Port
-            // 
-            this.TB_Local_Port.Location = new System.Drawing.Point(270, 41);
-            this.TB_Local_Port.Name = "TB_Local_Port";
-            this.TB_Local_Port.Size = new System.Drawing.Size(47, 21);
-            this.TB_Local_Port.TabIndex = 3;
-            // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(235, 17);
+            this.label7.Location = new System.Drawing.Point(191, 17);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(29, 12);
             this.label7.TabIndex = 21;
             this.label7.Text = "端口";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(235, 44);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(29, 12);
-            this.label15.TabIndex = 20;
-            this.label15.Text = "端口";
             // 
             // TB_Passwd
             // 
@@ -277,7 +251,7 @@
             // BT_Start
             // 
             this.BT_Start.BackColor = System.Drawing.Color.Green;
-            this.BT_Start.Location = new System.Drawing.Point(114, 159);
+            this.BT_Start.Location = new System.Drawing.Point(102, 174);
             this.BT_Start.Name = "BT_Start";
             this.BT_Start.Size = new System.Drawing.Size(120, 43);
             this.BT_Start.TabIndex = 0;
@@ -285,21 +259,48 @@
             this.BT_Start.UseVisualStyleBackColor = false;
             this.BT_Start.Click += new System.EventHandler(this.BT_Start_Click);
             // 
-            // BT_Save
+            // CB_Ping
             // 
-            this.BT_Save.Location = new System.Drawing.Point(270, 80);
-            this.BT_Save.Name = "BT_Save";
-            this.BT_Save.Size = new System.Drawing.Size(47, 23);
-            this.BT_Save.TabIndex = 24;
-            this.BT_Save.Text = "保存";
-            this.BT_Save.UseVisualStyleBackColor = true;
-            this.BT_Save.Visible = false;
+            this.CB_Ping.AutoSize = true;
+            this.CB_Ping.Location = new System.Drawing.Point(192, 124);
+            this.CB_Ping.Name = "CB_Ping";
+            this.CB_Ping.Size = new System.Drawing.Size(72, 16);
+            this.CB_Ping.TabIndex = 26;
+            this.CB_Ping.Text = "自动ping";
+            this.CB_Ping.UseVisualStyleBackColor = true;
+            // 
+            // TB_PingIP
+            // 
+            this.TB_PingIP.Location = new System.Drawing.Point(77, 122);
+            this.TB_PingIP.Name = "TB_PingIP";
+            this.TB_PingIP.Size = new System.Drawing.Size(104, 21);
+            this.TB_PingIP.TabIndex = 27;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(7, 125);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(41, 12);
+            this.label1.TabIndex = 28;
+            this.label1.Text = "PingIP";
+            // 
+            // CB_AutoIP
+            // 
+            this.CB_AutoIP.AutoSize = true;
+            this.CB_AutoIP.Location = new System.Drawing.Point(192, 43);
+            this.CB_AutoIP.Name = "CB_AutoIP";
+            this.CB_AutoIP.Size = new System.Drawing.Size(60, 16);
+            this.CB_AutoIP.TabIndex = 29;
+            this.CB_AutoIP.Text = "获取IP";
+            this.CB_AutoIP.UseVisualStyleBackColor = true;
+            this.CB_AutoIP.CheckedChanged += new System.EventHandler(this.CB_AutoIP_CheckedChanged);
             // 
             // FromMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(347, 229);
+            this.ClientSize = new System.Drawing.Size(309, 229);
             this.Controls.Add(this.BT_Start);
             this.Controls.Add(this.groupBox2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
@@ -322,9 +323,7 @@
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox TB_SuperNode_Port;
-        private System.Windows.Forms.TextBox TB_Local_Port;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox TB_Passwd;
         private System.Windows.Forms.TextBox TB_Local_IP;
         private System.Windows.Forms.TextBox TB_SuperNode_IP;
@@ -340,11 +339,13 @@
         private System.Windows.Forms.ToolStripMenuItem 打开ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 关闭ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 关于ToolStripMenuItem;
-        private System.Windows.Forms.Button BT_Random;
         private System.Windows.Forms.ToolStripMenuItem 使用说明ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 所有IPToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.Button BT_Save;
+        private System.Windows.Forms.CheckBox CB_Ping;
+        private System.Windows.Forms.TextBox TB_PingIP;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox CB_AutoIP;
     }
 }
 

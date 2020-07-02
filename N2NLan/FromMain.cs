@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -94,7 +95,6 @@ namespace N2NLan
         private void IniWrite(string Section, string Key, string Value)
         {
             string iniPath = Application.StartupPath + "\\n2n.ini";
-
             INIHelper.Write(Section, Key, Value, iniPath);
         }
 
@@ -124,9 +124,24 @@ namespace N2NLan
             TB_SuperNode_IP.Text = IniRead("setting", "SuperNode_IP");
             TB_SuperNode_Port.Text = IniRead("setting", "SuperNode_Port");
             TB_Local_IP.Text = IniRead("setting", "Local_IP");
-            TB_Local_Port.Text = IniRead("setting", "Local_Port");
             TB_Group.Text = IniRead("setting", "Group");
             TB_Passwd.Text = IniRead("setting", "Passwd");
+            TB_PingIP.Text = IniRead("setting", "PingIP");
+            //自动PingIP
+            if (IniRead("setting", "AutoPing").Trim() == "1")
+                CB_Ping.Checked = true;
+            else
+                CB_Ping.Checked = false;
+            //自动IP
+            if (IniRead("setting", "AutoIP").Trim() == "1")
+            {
+                CB_AutoIP.Checked = true;
+                string cpuid = GetProcessID();
+                GetIPByCPU(cpuid);
+            }
+            else
+                CB_AutoIP.Checked = false;
+
             //开机启动
             if (IniRead("setting", "Auto").Trim() == "1")
             {
@@ -143,11 +158,11 @@ namespace N2NLan
             }
             else
                 CB_Min.Checked = false;
-
         }
 
         private void FromMain_FormClosing(object sender, FormClosingEventArgs e)
         {
+            Save();
             if (MessageBox.Show("是否确认退出程序？", "退出", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
             {
                 // 关闭所有的线程
@@ -195,7 +210,6 @@ namespace N2NLan
 
         private void BT_Start_Click(object sender, EventArgs e)
         {
-            Save();
             killProcess("edge.exe");
             string sys_Path = "";
             if (systype)
@@ -228,7 +242,7 @@ namespace N2NLan
                 string mac_address = IniRead("setting", "mac_address");
                 string verbose = IniRead("setting", "verbose");
                 string packet_forwarding = IniRead("setting", "packet_forwarding");
-                string Local_Port = TB_Local_Port.Text;
+                string Local_Port = IniRead("setting", "Local_Port");
                 string SelfArg = IniRead("setting", "SelfArg");
 
                 string appFile = Application.StartupPath + sys_Path;
@@ -256,7 +270,8 @@ namespace N2NLan
                  */
                 RealAction(appFile, arg);
                 //N2NLog.AppendText(DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss:") + "Start" + "\r\n");
-                PingIP();
+                if (CB_Ping.Checked)
+                    PingIP();
             }
             else
             {
@@ -266,10 +281,14 @@ namespace N2NLan
                 killProcess("edge.exe");
                 //N2NLog.AppendText(DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss:") + "Stop" + "\r\n");
             }
+            if (CB_AutoIP.Checked)
+            {
+                string cpuid = GetProcessID();
 
-            Dictionary<string, string> dic = new Dictionary<string, string>();
-            dic.Add("", TB_Local_IP.Text);
-            string msg = HttpHelper.GetResponseString(HttpHelper.CreatePostHttpResponse("http://n2n.gearhostpreview.com/api/N2N/", dic));
+                Dictionary<string, string> dic = new Dictionary<string, string>();
+                dic.Add("", cpuid + "," + TB_Local_IP.Text);
+                string msg = HttpHelper.GetResponseString(HttpHelper.CreatePostHttpResponse("http://n2n.gearhostpreview.com/api/N2N/", dic));
+            }
 
         }
 
@@ -302,12 +321,14 @@ namespace N2NLan
             IniWrite("setting", "SuperNode_IP", TB_SuperNode_IP.Text.Trim());
             IniWrite("setting", "SuperNode_Port", TB_SuperNode_Port.Text.Trim());
             IniWrite("setting", "Local_IP", TB_Local_IP.Text.Trim());
-            IniWrite("setting", "Local_Port", TB_Local_Port.Text.Trim());
             IniWrite("setting", "Group", TB_Group.Text.Trim());
             IniWrite("setting", "Passwd", TB_Passwd.Text.Trim());
+            IniWrite("setting", "PingIP", TB_PingIP.Text.Trim());
 
             IniWrite("setting", "Auto", CB_Auto.Checked ?"1":"0");
             IniWrite("setting", "AutoMin", CB_Min.Checked ? "1" : "0");
+            IniWrite("setting", "AutoPing", CB_Ping.Checked ? "1" : "0");
+            IniWrite("setting", "AutoIP", CB_AutoIP.Checked ? "1" : "0");
         }
 
         private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
@@ -350,11 +371,10 @@ namespace N2NLan
 
         }
 
-        private void BT_Random_Click(object sender, EventArgs e)
+        private void GetIPByCPU(string cpuid)
         {
-            string ip = HttpHelper.GetResponseString(HttpHelper.CreateGetHttpResponse("http://n2n.gearhostpreview.com/api/N2N/"));
+            string ip = HttpHelper.GetResponseString(HttpHelper.CreateGetHttpResponse("http://n2n.gearhostpreview.com/api/N2N/" + cpuid));
             TB_Local_IP.Text = ip.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "").Replace("\t", "");
-            Save();
         }
 
         private void 使用说明ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -470,7 +490,7 @@ namespace N2NLan
 
         private void PingIP()
         {
-            File.WriteAllText(Application.StartupPath + "\\pingip.bat", "TIMEOUT /T 10 \r\n ping 10.10.1.1 -t\r\n");
+            File.WriteAllText(Application.StartupPath + "\\pingip.bat", "TIMEOUT /T 10 \r\n ping "+TB_PingIP.Text.Trim()+" -t\r\n");
             Process.Start(Application.StartupPath + "\\pingip.bat");
         }
 
@@ -478,11 +498,11 @@ namespace N2NLan
         {
             if (TB_SuperNode_IP.Text != "n2n.udpfile.com" || TB_Group.Text != "BD")
             {
-                BT_Random.Enabled = false;
+                CB_AutoIP.Enabled = false;
             }
             else 
-            { 
-                BT_Random.Enabled = true;
+            {
+                CB_AutoIP.Enabled = true;
             }
         }
 
@@ -490,12 +510,54 @@ namespace N2NLan
         {
             if (TB_SuperNode_IP.Text != "n2n.udpfile.com" || TB_Group.Text != "BD")
             {
-                BT_Random.Enabled = false;
+                CB_AutoIP.Enabled = false;
             }
             else 
-            { 
-                BT_Random.Enabled = true;
+            {
+                CB_AutoIP.Enabled = true;
             }
         }
+
+        /// <summary>
+        /// 这里是获取cpu的id
+        /// </summary>
+        /// <returns></returns>
+        public string GetProcessID()
+        {
+            try
+            {
+                string str = string.Empty;
+                ManagementClass mcCpu = new ManagementClass("win32_Processor");
+                ManagementObjectCollection mocCpu = mcCpu.GetInstances();
+                foreach (ManagementObject m in mocCpu)
+                {
+                    str = m["Processorid"].ToString().Trim();
+                }
+                return str;
+            }
+            catch (Exception ex)
+            {
+                return "";
+            }
+        }
+
+        private void CB_AutoIP_CheckedChanged(object sender, EventArgs e)
+        {
+            if (CB_AutoIP.Checked)
+            {
+                TB_SuperNode_IP.Enabled = false;
+                TB_SuperNode_Port.Enabled = false;
+                TB_Local_IP.Enabled = false;
+                TB_Group.Enabled = false;
+            }
+            else 
+            {
+                TB_SuperNode_IP.Enabled = true;
+                TB_SuperNode_Port.Enabled = true;
+                TB_Local_IP.Enabled = true;
+                TB_Group.Enabled = true;
+            }
+        }
+
     }
 }
