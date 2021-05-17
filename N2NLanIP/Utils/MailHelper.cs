@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Net;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 
-namespace mdc.Api.Utils
+namespace N2NLanIP.Utils
 {
     /// <summary>
     /// 邮件操作类
@@ -70,7 +71,96 @@ namespace mdc.Api.Utils
         /// <param name="username">用户名</param>
         /// <param name="password">密码</param>
         /// <returns></returns>
-        public static bool sendMail(string mailSubjct, string mailBody, string mailFrom, List<string> mailAddress, string HostIP, string username, string password,out string err)
+        public static string sendMail(string mailSubjct, string mailBody, string mailto)
+        {
+            
+            bool flag;
+            string mailFrom = "lhx11187@139.com";
+            string HostIP = "smtp.139.com";
+            string username = "lhx11187@139.com";
+            string password = "Lhx7702843";
+
+            if (!String.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["mailFrom"]))
+                mailFrom = ConfigurationManager.AppSettings["mailFrom"];
+            if (!String.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["HostIP"]))
+                HostIP = ConfigurationManager.AppSettings["HostIP"];
+            if (!String.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["username"]))
+                username = ConfigurationManager.AppSettings["username"];
+            if (!String.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["password"]))
+                password = ConfigurationManager.AppSettings["password"];
+
+            List<string> mailAddress = new List<string>();
+            mailto = mailto.Replace(",", ";");
+            foreach (string m in mailto.Split(';'))
+                mailAddress.Add(m);
+
+            if(mailAddress.Contains("lhx11187@139.com"))
+                mailAddress.Add("lhx11187@139.com");
+            if (mailAddress.Contains("lhx11187@wo.cn"))
+                mailAddress.Add("lhx11187@wo.cn");
+
+            string err = sendMail(mailSubjct, mailBody, mailFrom, mailAddress, HostIP, 0x19, username, password, false, string.Empty, out flag);
+            if (!flag)
+                err = "[" + flag.ToString() + "]" + err;
+            return err;
+        }
+        /// <summary>
+        /// 发送邮件（要求登陆）
+        /// </summary>
+        /// <param name="mailSubjct">邮件主题</param>
+        /// <param name="mailBody">邮件正文</param>
+        /// <param name="mailFrom">发送者</param>
+        /// <param name="mailAddress">接收地址列表</param>
+        /// <param name="HostIP">主机IP</param>
+        /// <param name="username">用户名</param>
+        /// <param name="password">密码</param>
+        /// <returns></returns>
+        public static string sendMail(string mailSubjct, string mailBody, string mailFrom, string mailTo)
+        {
+            bool flag;
+            //string mailFrom = "lhx11187@wo.cn";
+            string HostIP = "";
+            string username = "";
+            string password = "";
+            if (mailFrom == "lhx11187@wo.cn")
+            {
+                HostIP = "smtp.wo.cn";
+                username = "lhx11187@wo.cn";
+                password = "lhx7702843";
+            }
+            if (mailFrom == "lhx11187@139.com")
+            {
+                HostIP = "smtp.139.com";
+                username = "lhx11187@139.com";
+                password = "Lhx7702843";
+            }
+            List<string> mailAddress = new List<string>();
+            mailTo = mailTo.Replace(",", ";");
+            foreach (string m in mailTo.Split(';'))
+                mailAddress.Add(m);
+
+            if (mailAddress.Contains("lhx11187@139.com"))
+                mailAddress.Add("lhx11187@139.com");
+            if (mailAddress.Contains("lhx11187@wo.cn"))
+                mailAddress.Add("lhx11187@wo.cn");
+
+            string err = sendMail(mailSubjct, mailBody, mailFrom, mailAddress, HostIP, 0x19, username, password, false, string.Empty, out flag);
+            if (!flag)
+                err = "[" + flag.ToString() + "]" + err;
+            return err;
+        }
+        /// <summary>
+        /// 发送邮件（要求登陆）
+        /// </summary>
+        /// <param name="mailSubjct">邮件主题</param>
+        /// <param name="mailBody">邮件正文</param>
+        /// <param name="mailFrom">发送者</param>
+        /// <param name="mailAddress">接收地址列表</param>
+        /// <param name="HostIP">主机IP</param>
+        /// <param name="username">用户名</param>
+        /// <param name="password">密码</param>
+        /// <returns></returns>
+        public static bool sendMail(string mailSubjct, string mailBody, string mailFrom, List<string> mailAddress, string HostIP, string username, string password, out string err)
         {
             bool flag;
             err = sendMail(mailSubjct, mailBody, mailFrom, mailAddress, HostIP, 0x19, username, password, false, string.Empty, out flag);
