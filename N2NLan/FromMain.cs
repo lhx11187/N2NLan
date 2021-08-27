@@ -133,11 +133,12 @@ namespace N2NLan
             else
                 CB_Ping.Checked = false;
             //自动IP
-            if (IniRead("setting", "AutoIP").Trim() == "1")
+            if (string.IsNullOrEmpty(TB_Local_IP.Text) && IniRead("setting", "AutoIP").Trim() == "1")
             {
                 CB_AutoIP.Checked = true;
                 string cpuid = GetProcessID();
-                GetIPByCPU(cpuid);
+                //GetIPByCPU(cpuid);
+                GetIPBySuperNode();
             }
             else
                 CB_AutoIP.Checked = false;
@@ -217,10 +218,10 @@ namespace N2NLan
             else
                 sys_Path = "\\x86\\edge.exe";
             if (BT_Start.Text == "安装驱动")
-            { 
+            {
                 DriverInstall();
                 Thread.Sleep(5);
-                FromMain_Load(sender,e);
+                FromMain_Load(sender, e);
                 return;
             }
             if (BT_Start.Text == "启动")
@@ -283,11 +284,16 @@ namespace N2NLan
             }
             if (CB_AutoIP.Checked)
             {
-                string cpuid = GetProcessID();
+                try
+                {
+                    string cpuid = GetProcessID();
 
-                Dictionary<string, string> dic = new Dictionary<string, string>();
-                dic.Add("", cpuid + "," + TB_Local_IP.Text);
-                string msg = HttpHelper.GetResponseString(HttpHelper.CreatePostHttpResponse("http://n2n.gearhostpreview.com/api/N2N/", dic));
+                    Dictionary<string, string> dic = new Dictionary<string, string>();
+                    dic.Add("", cpuid + "," + TB_Local_IP.Text);
+                    //string msg = HttpHelper.GetResponseString(HttpHelper.CreatePostHttpResponse("http://n2n.gearhostpreview.com/api/N2N/", dic));
+                    string msg = HttpHelper.GetResponseString(HttpHelper.CreatePostHttpResponse("https://cron.blackduck.workers.dev/n2n/setip/", dic));
+                }
+                catch (Exception ex) { }
             }
 
         }
@@ -311,7 +317,7 @@ namespace N2NLan
                 }
             }
             catch (Exception e)
-            { 
+            {
 
             }
         }
@@ -325,7 +331,7 @@ namespace N2NLan
             IniWrite("setting", "Passwd", TB_Passwd.Text.Trim());
             IniWrite("setting", "PingIP", TB_PingIP.Text.Trim());
 
-            IniWrite("setting", "Auto", CB_Auto.Checked ?"1":"0");
+            IniWrite("setting", "Auto", CB_Auto.Checked ? "1" : "0");
             IniWrite("setting", "AutoMin", CB_Min.Checked ? "1" : "0");
             IniWrite("setting", "AutoPing", CB_Ping.Checked ? "1" : "0");
             IniWrite("setting", "AutoIP", CB_AutoIP.Checked ? "1" : "0");
@@ -373,53 +379,72 @@ namespace N2NLan
 
         private void GetIPByCPU(string cpuid)
         {
-            string ip = HttpHelper.GetResponseString(HttpHelper.CreateGetHttpResponse("http://n2n.gearhostpreview.com/api/N2N/" + cpuid));
-            TB_Local_IP.Text = ip.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "").Replace("\t", "");
+            //string ip = HttpHelper.GetResponseString(HttpHelper.CreateGetHttpResponse("http://n2n.gearhostpreview.com/api/N2N/" + cpuid));
+            //TB_Local_IP.Text = ip.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "").Replace("\t", "");
+        }
+
+        private void GetIPBySuperNode()
+        {
+            try
+            {
+                string ip = HttpHelper.GetResponseString(HttpHelper.CreateGetHttpResponse("https://cron.blackduck.workers.dev/n2n/getip/" + TB_SuperNode_IP.Text));
+                TB_Local_IP.Text = ip.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "").Replace("\t", "");
+            }
+            catch (Exception e) { }
         }
 
         private void 使用说明ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Process.Start("http://n2n.gearhostpreview.com/readme.html");
+            //Process.Start("http://n2n.gearhostpreview.com/readme.html");
+            Process.Start("https://cron.blackduck.workers.dev/n2n/");
         }
 
         private void ChenkUpdate()
         {
-            //检查更新
-            string LocalVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            this.Text = this.Text + " V" + LocalVersion;
-            IniWrite("setting", "Version", LocalVersion);
-            string ServerVersion = HttpHelper.GetResponseString(HttpHelper.CreateGetHttpResponse("http://n2n.gearhostpreview.com/api/Version/"));
-            ServerVersion = ServerVersion.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "").Replace("\t", "");
-            if (ServerVersion != IniRead("setting", "Version"))
+            try
             {
-                try
+                //检查更新
+                string LocalVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                this.Text = this.Text + " V" + LocalVersion;
+                IniWrite("setting", "Version", LocalVersion);
+
+                string ServerVersion = HttpHelper.GetResponseString(HttpHelper.CreateGetHttpResponse("https://cron.blackduck.workers.dev/n2n/version/"));
+                ServerVersion = ServerVersion.Trim().Replace("\"", "").Replace("\r", "").Replace("\n", "").Replace("\t", "");
+                if (ServerVersion != IniRead("setting", "Version"))
                 {
-                    if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\temp\\"))
-                        Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\temp\\");
-                    if (File.Exists(Application.StartupPath + "\\temp\\N2NLan.exe"))
-                        File.Delete(Application.StartupPath + "\\temp\\N2NLan.exe");
-                    WebClient wc = new WebClient();
-                    wc.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.Reload);
-                    //wc.DownloadFile("http://n2n.gearhostpreview.com/N2NLan.zip", Application.StartupPath + "\\N2NLan.zip");
-                    wc.DownloadFile("http://n2n.gearhostpreview.com/N2NLan.exe", Application.StartupPath + "\\temp\\N2NLan.exe");
-                    //ZipHelper zh = new ZipHelper();
-                    //zh.UnZip(Application.StartupPath + "\\N2NLan.zip", Application.StartupPath + "\\temp\\");
-                    File.WriteAllText(Application.StartupPath + "\\update.bat", "TIMEOUT /T 10 \r\n copy " + Application.StartupPath + "\\temp\\N2NLan.exe " + Application.StartupPath + "\\N2NLan.exe \r\nTIMEOUT /T 10 \r\n" + Application.StartupPath + "\\N2NLan.exe \r\n");
-                    if (MessageBox.Show("程序更新？", "退出", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                    try
                     {
-                        // 关闭所有的线程
-                        killProcess("edge.exe");
-                        //killProcess(SuperNode_Path);
-                        this.Dispose();
-                        this.Close();
-                        Process.Start(Application.StartupPath + "\\update.bat");
+                        if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\temp\\"))
+                            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\temp\\");
+                        if (File.Exists(Application.StartupPath + "\\temp\\N2NLan.exe"))
+                            File.Delete(Application.StartupPath + "\\temp\\N2NLan.exe");
+                        WebClient wc = new WebClient();
+                        wc.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.Reload);
+                        //wc.DownloadFile("http://n2n.gearhostpreview.com/N2NLan.zip", Application.StartupPath + "\\N2NLan.zip");
+                        wc.DownloadFile("https://cfpage-zonk.pages.dev/n2n/N2NLan.exe", Application.StartupPath + "\\temp\\N2NLan.exe");
+                        //ZipHelper zh = new ZipHelper();
+                        //zh.UnZip(Application.StartupPath + "\\N2NLan.zip", Application.StartupPath + "\\temp\\");
+                        File.WriteAllText(Application.StartupPath + "\\update.bat", "TIMEOUT /T 10 \r\n copy " + Application.StartupPath + "\\temp\\N2NLan.exe " + Application.StartupPath + "\\N2NLan.exe \r\nTIMEOUT /T 10 \r\n" + Application.StartupPath + "\\N2NLan.exe \r\n");
+                        if (MessageBox.Show("程序更新？", "退出", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                        {
+                            // 关闭所有的线程
+                            killProcess("edge.exe");
+                            //killProcess(SuperNode_Path);
+                            this.Dispose();
+                            this.Close();
+                            Process.Start(Application.StartupPath + "\\update.bat");
+                        }
+
                     }
+                    catch (Exception ex)
+                    {
 
+                    }
                 }
-                catch (Exception ex)
-                {
+            }
+            catch (Exception ex)
+            {
 
-                }
             }
         }
 
@@ -462,9 +487,9 @@ namespace N2NLan
         {
             string path = "";
             if (systype)
-                path = Application.StartupPath + "\\driver\\NDIS6_x64\\tapinstall.exe install "+Application.StartupPath + "\\driver\\NDIS6_x64\\OemVista.inf tap0901";
+                path = Application.StartupPath + "\\driver\\NDIS6_x64\\tapinstall.exe install " + Application.StartupPath + "\\driver\\NDIS6_x64\\OemVista.inf tap0901";
             else
-                path = Application.StartupPath + "\\driver\\NDIS6_x86\\tapinstall.exe install " +Application.StartupPath + "\\driver\\NDIS6_x86\\OemVista.inf tap0901";
+                path = Application.StartupPath + "\\driver\\NDIS6_x86\\tapinstall.exe install " + Application.StartupPath + "\\driver\\NDIS6_x86\\OemVista.inf tap0901";
             Process.Start(path);
             /*
             var process = new Process();
@@ -483,14 +508,18 @@ namespace N2NLan
 
         private void 所有IPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string allip = HttpHelper.GetResponseString(HttpHelper.CreateGetHttpResponse("http://n2n.gearhostpreview.com/api/allip/"));
-            File.WriteAllText(Application.StartupPath + "\\allip.txt", allip);
-            Process.Start(Application.StartupPath + "\\allip.txt");
+            try
+            {
+                string allip = HttpHelper.GetResponseString(HttpHelper.CreateGetHttpResponse("https://cron.blackduck.workers.dev/n2n/getip/"));
+                File.WriteAllText(Application.StartupPath + "\\allip.txt", allip);
+                Process.Start(Application.StartupPath + "\\allip.txt");
+            }
+            catch (Exception ex) { }
         }
 
         private void PingIP()
         {
-            File.WriteAllText(Application.StartupPath + "\\pingip.bat", "TIMEOUT /T 10 \r\n ping "+TB_PingIP.Text.Trim()+" -t\r\n");
+            File.WriteAllText(Application.StartupPath + "\\pingip.bat", "TIMEOUT /T 10 \r\n ping " + TB_PingIP.Text.Trim() + " -t\r\n");
             Process.Start(Application.StartupPath + "\\pingip.bat");
         }
 
@@ -500,7 +529,7 @@ namespace N2NLan
             {
                 CB_AutoIP.Enabled = false;
             }
-            else 
+            else
             {
                 CB_AutoIP.Enabled = true;
             }
@@ -512,7 +541,7 @@ namespace N2NLan
             {
                 CB_AutoIP.Enabled = false;
             }
-            else 
+            else
             {
                 CB_AutoIP.Enabled = true;
             }
@@ -550,7 +579,7 @@ namespace N2NLan
                 TB_Local_IP.Enabled = false;
                 TB_Group.Enabled = false;
             }
-            else 
+            else
             {
                 TB_SuperNode_IP.Enabled = true;
                 TB_SuperNode_Port.Enabled = true;
