@@ -421,7 +421,15 @@ namespace N2NLan
                         WebClient wc = new WebClient();
                         wc.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.Reload);
                         //wc.DownloadFile("http://n2n.gearhostpreview.com/N2NLan.zip", Application.StartupPath + "\\N2NLan.zip");
-                        wc.DownloadFile("https://cfpage-zonk.pages.dev/n2n/N2NLan.exe", Application.StartupPath + "\\temp\\N2NLan.exe");
+                        //https://cfpage.sfcs.ml/n2n/N2NLan.exe
+                        try
+                        {
+                            wc.DownloadFile("https://cfpage.sfcs.ml/n2n/N2NLan.exe", Application.StartupPath + "\\temp\\N2NLan.exe");
+                        }
+                        catch (Exception e)
+                        {
+                            wc.DownloadFile("https://cfpage-zonk.pages.dev/n2n/N2NLan.exe", Application.StartupPath + "\\temp\\N2NLan.exe");
+                        }
                         //ZipHelper zh = new ZipHelper();
                         //zh.UnZip(Application.StartupPath + "\\N2NLan.zip", Application.StartupPath + "\\temp\\");
                         File.WriteAllText(Application.StartupPath + "\\update.bat", "TIMEOUT /T 10 \r\n copy " + Application.StartupPath + "\\temp\\N2NLan.exe " + Application.StartupPath + "\\N2NLan.exe \r\nTIMEOUT /T 10 \r\n" + Application.StartupPath + "\\N2NLan.exe \r\n");
