@@ -133,7 +133,7 @@ namespace N2NLan
             else
                 CB_Ping.Checked = false;
             //自动IP
-            if (string.IsNullOrEmpty(TB_Local_IP.Text) && IniRead("setting", "AutoIP").Trim() == "1")
+            if (IniRead("setting", "AutoIP").Trim() == "1")
             {
                 CB_AutoIP.Checked = true;
                 string cpuid = GetProcessID();
@@ -143,7 +143,7 @@ namespace N2NLan
             else
                 CB_AutoIP.Checked = false;
 
-            //开机启动
+            //自动开始
             if (IniRead("setting", "Auto").Trim() == "1")
             {
                 CB_Auto.Checked = true;
@@ -282,16 +282,17 @@ namespace N2NLan
                 killProcess("edge.exe");
                 //N2NLog.AppendText(DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss:") + "Stop" + "\r\n");
             }
-            if (CB_AutoIP.Checked)
+            //if (CB_AutoIP.Checked)
             {
                 try
                 {
-                    string cpuid = GetProcessID();
+                    //string cpuid = GetProcessID();
 
-                    Dictionary<string, string> dic = new Dictionary<string, string>();
-                    dic.Add("", cpuid + "," + TB_Local_IP.Text);
+                    //Dictionary<string, string> dic = new Dictionary<string, string>();
+                    //dic.Add("", cpuid + "," + TB_Local_IP.Text);
                     //string msg = HttpHelper.GetResponseString(HttpHelper.CreatePostHttpResponse("http://n2n.gearhostpreview.com/api/N2N/", dic));
-                    string msg = HttpHelper.GetResponseString(HttpHelper.CreatePostHttpResponse("https://cron.blackduck.workers.dev/n2n/setip/", dic));
+                    //string msg = HttpHelper.GetResponseString(HttpHelper.CreatePostHttpResponse("https://cron.blackduck.workers.dev/n2n/setip/"+TB_SuperNode_IP, dic));
+                    string msg = HttpHelper.Post("https://cron.blackduck.workers.dev/n2n/setip/" + TB_SuperNode_IP,TB_Local_IP.Text);
                 }
                 catch (Exception ex) { }
             }
@@ -424,7 +425,11 @@ namespace N2NLan
                         //https://cfpage.sfcs.ml/n2n/N2NLan.exe
                         try
                         {
-                            wc.DownloadFile("https://cfpage.sfcs.ml/n2n/N2NLan.exe", Application.StartupPath + "\\temp\\N2NLan.exe");
+                            string url=IniRead("setting", "UpdateURL");
+                            if (string.IsNullOrWhiteSpace(url))
+                                url = "https://cfpage.sfcs.ml/n2n/N2NLan.exe";
+
+                            wc.DownloadFile(url, Application.StartupPath + "\\temp\\N2NLan.exe");
                         }
                         catch (Exception e)
                         {
@@ -533,7 +538,9 @@ namespace N2NLan
 
         private void TB_SuperNode_IP_TextChanged(object sender, EventArgs e)
         {
-            if (TB_SuperNode_IP.Text != "n2n.udpfile.com" || TB_Group.Text != "BD")
+
+            //if (TB_SuperNode_IP.Text != "n2n.udpfile.com" || TB_Group.Text != "BD")
+            if (TB_Group.Text != "BD")
             {
                 CB_AutoIP.Enabled = false;
             }
@@ -545,7 +552,7 @@ namespace N2NLan
 
         private void TB_Group_TextChanged(object sender, EventArgs e)
         {
-            if (TB_SuperNode_IP.Text != "n2n.udpfile.com" || TB_Group.Text != "BD")
+            if (TB_Group.Text != "BD")
             {
                 CB_AutoIP.Enabled = false;
             }
@@ -582,6 +589,7 @@ namespace N2NLan
         {
             if (CB_AutoIP.Checked)
             {
+                Save();
                 TB_SuperNode_IP.Enabled = false;
                 TB_SuperNode_Port.Enabled = false;
                 TB_Local_IP.Enabled = false;
@@ -589,6 +597,7 @@ namespace N2NLan
             }
             else
             {
+                Save();
                 TB_SuperNode_IP.Enabled = true;
                 TB_SuperNode_Port.Enabled = true;
                 TB_Local_IP.Enabled = true;
