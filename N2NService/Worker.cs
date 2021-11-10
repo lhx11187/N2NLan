@@ -88,6 +88,7 @@ namespace N2NService
 
             }
         }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Start();
@@ -97,6 +98,30 @@ namespace N2NService
                 await Task.Delay(1000, stoppingToken);
             }
         }
+
+        public override Task StartAsync(CancellationToken cancellationToken)
+        {
+            Start();
+            _logger.LogInformation($"Worker started at: {DateTime.Now}");
+            return base.StartAsync(cancellationToken);
+        }
+
+        public override Task StopAsync(CancellationToken cancellationToken)
+        {
+            killProcess("edge.exe");
+            _logger.LogError($"Worker stopped at: {DateTime.Now}");
+
+            return base.StopAsync(cancellationToken);
+        }
+
+        public override void Dispose()
+        {
+            killProcess("edge.exe");
+            _logger.LogInformation($"Worker disposed at: {DateTime.Now}");
+
+            base.Dispose();
+        }
+
         private void Start()
         {
             bool systype = false;

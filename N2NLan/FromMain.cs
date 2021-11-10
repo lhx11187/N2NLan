@@ -279,7 +279,7 @@ namespace N2NLan
                  */
                 RealAction(appFile, arg);
                 Thread.Sleep(1000);
-                RealAction(Application.StartupPath + "\\addroute.bat", "");
+                Process.Start(Application.StartupPath + "\\addroute.bat");
                 //N2NLog.AppendText(DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss:") + "Start" + "\r\n");
                 if (CB_Ping.Checked)
                     PingIP();
