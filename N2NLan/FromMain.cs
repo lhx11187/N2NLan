@@ -54,29 +54,37 @@ namespace N2NLan
         }
         private void RealAction(string StartFileName, string StartFileArg)
         {
-            Process CmdProcess = new Process();
-            CmdProcess.StartInfo.FileName = StartFileName;      // 命令  
-            CmdProcess.StartInfo.Arguments = StartFileArg;      // 参数  
+            try
+            {
+                Process CmdProcess = new Process();
+                CmdProcess.StartInfo.FileName = StartFileName;      // 命令  
+                CmdProcess.StartInfo.Arguments = StartFileArg;      // 参数  
 
-            CmdProcess.StartInfo.CreateNoWindow = true;         // 不创建新窗口  
-            CmdProcess.StartInfo.UseShellExecute = false;
-            CmdProcess.StartInfo.RedirectStandardInput = true;  // 重定向输入  
-            CmdProcess.StartInfo.RedirectStandardOutput = true; // 重定向标准输出  
-            CmdProcess.StartInfo.RedirectStandardError = true;  // 重定向错误输出  
-            //CmdProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;  
+                CmdProcess.StartInfo.CreateNoWindow = true;         // 不创建新窗口  
+                CmdProcess.StartInfo.UseShellExecute = false;
+                CmdProcess.StartInfo.RedirectStandardInput = true;  // 重定向输入  
+                CmdProcess.StartInfo.RedirectStandardOutput = true; // 重定向标准输出  
+                CmdProcess.StartInfo.RedirectStandardError = true;  // 重定向错误输出  
+                                                                    //CmdProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;  
 
-            CmdProcess.OutputDataReceived += new DataReceivedEventHandler(p_OutputDataReceived);
-            CmdProcess.ErrorDataReceived += new DataReceivedEventHandler(p_ErrorDataReceived);
+                CmdProcess.OutputDataReceived += new DataReceivedEventHandler(p_OutputDataReceived);
+                CmdProcess.ErrorDataReceived += new DataReceivedEventHandler(p_ErrorDataReceived);
 
-            CmdProcess.EnableRaisingEvents = true;                      // 启用Exited事件  
-            CmdProcess.Exited += new EventHandler(CmdProcess_Exited);   // 注册进程结束事件  
+                CmdProcess.EnableRaisingEvents = true;                      // 启用Exited事件  
+                CmdProcess.Exited += new EventHandler(CmdProcess_Exited);   // 注册进程结束事件  
 
-            CmdProcess.Start();
-            CmdProcess.BeginOutputReadLine();
-            CmdProcess.BeginErrorReadLine();
+                CmdProcess.Start();
+                CmdProcess.BeginOutputReadLine();
+                CmdProcess.BeginErrorReadLine();
 
-            // 如果打开注释，则以同步方式执行命令，此例子中用Exited事件异步执行。  
-            // CmdProcess.WaitForExit();       
+                // 如果打开注释，则以同步方式执行命令，此例子中用Exited事件异步执行。  
+                // CmdProcess.WaitForExit();
+                //  }
+            }
+            catch (Exception ex) 
+            { 
+
+            }
         }
 
         private void CmdProcess_Exited(object sender, EventArgs e)
@@ -270,6 +278,8 @@ namespace N2NLan
                     arg = arg + " -t";
                  */
                 RealAction(appFile, arg);
+                Thread.Sleep(1000);
+                RealAction(Application.StartupPath + "\\addroute.bat", "");
                 //N2NLog.AppendText(DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss:") + "Start" + "\r\n");
                 if (CB_Ping.Checked)
                     PingIP();

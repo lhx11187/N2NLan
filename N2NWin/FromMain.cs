@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace N2NWin
@@ -213,6 +214,8 @@ namespace N2NWin
                 if (!String.IsNullOrWhiteSpace(SelfArg))
                     arg = arg + " " + SelfArg;
                 RealAction(appFile, arg);
+                Thread.Sleep(1000);
+                RealAction(Application.StartupPath + "\\addroute.bat","");
                 N2NLog.AppendText(DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss:") + "Start" + "\r\n");
             }
             else 
