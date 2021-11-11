@@ -176,6 +176,7 @@ namespace N2NLan
             {
                 // 关闭所有的线程
                 killProcess("edge.exe");
+                Process.Start(Application.StartupPath + "\\stop.bat");
                 //killProcess(SuperNode_Path);
                 this.Dispose();
                 this.Close();
@@ -290,6 +291,7 @@ namespace N2NLan
                 BT_Start.BackColor = Color.Green;
                 groupBox2.Enabled = true;
                 killProcess("edge.exe");
+                Process.Start(Application.StartupPath + "\\stop.bat");
                 //N2NLog.AppendText(DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss:") + "Stop" + "\r\n");
             }
             //if (CB_AutoIP.Checked)
@@ -374,6 +376,7 @@ namespace N2NLan
         private void 关闭ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             killProcess("edge.exe");
+            Process.Start(Application.StartupPath + "\\stop.bat");
             this.Dispose();
             this.Close();
         }

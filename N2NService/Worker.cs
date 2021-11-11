@@ -99,24 +99,22 @@ namespace N2NService
             }
         }
 
-        public override Task StartAsync(CancellationToken cancellationToken)
+        public override async Task StartAsync(CancellationToken cancellationToken)
         {
             Start();
-            _logger.LogInformation($"Worker started at: {DateTime.Now}");
-            return base.StartAsync(cancellationToken);
+            await base.StartAsync(cancellationToken);
         }
 
-        public override Task StopAsync(CancellationToken cancellationToken)
+        public override async Task StopAsync(CancellationToken cancellationToken)
         {
-            killProcess("edge.exe");
+            Stop();
             _logger.LogError($"Worker stopped at: {DateTime.Now}");
-
-            return base.StopAsync(cancellationToken);
+            await base.StopAsync(cancellationToken);
         }
 
         public override void Dispose()
         {
-            killProcess("edge.exe");
+            Stop();
             _logger.LogInformation($"Worker disposed at: {DateTime.Now}");
 
             base.Dispose();
@@ -206,6 +204,13 @@ namespace N2NService
             catch (Exception ex)
             {
             }
+        }
+
+        private void Stop()
+        {
+            killProcess("edge.exe");
+            Thread.Sleep(5000);
+            Process.Start(AppDomain.CurrentDomain.BaseDirectory + "\\stop.bat");
         }
 
         private void killProcess(string proName)

@@ -19,6 +19,6 @@ namespace N2NService
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddHostedService<Worker>();
-                });
+                }).UseWindowsService();
     }
 }
